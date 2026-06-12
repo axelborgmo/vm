@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="no"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>VM-poengene mine</title>
+<title>VM 2026 – Axel</title>
 <style>
 :root { color-scheme: light dark;
   --linje: color-mix(in srgb, currentColor 13%, transparent);
@@ -10,24 +10,41 @@
   --norge: #c8102e; --grønn: #1a8f4a; --gul: #b8860b; }
 * { box-sizing: border-box; margin: 0; }
 body { font: 15.5px/1.45 -apple-system, system-ui, sans-serif;
-  max-width: 560px; margin: 0 auto; padding: 16px 12px 70px; }
+  max-width: 560px; margin: 0 auto; padding: 14px 12px 70px; }
 h1 { font-size: 21px; letter-spacing: -.01em; }
-header > p { color: var(--demp); font-size: 13.5px; margin: 3px 0 12px; }
-.kort { border: 1px solid var(--linje); border-radius: 16px; padding: 16px; margin-bottom: 14px;
+.lenker { display: flex; gap: 10px; margin: 4px 0 12px; font-size: 13.5px; }
+.lenker a { color: var(--demp); }
+.kort { border: 1px solid var(--linje); border-radius: 16px; padding: 16px; margin-bottom: 12px;
   background: var(--flate); }
 .total { font-size: 42px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
 .total small { font-size: 15px; font-weight: 500; color: var(--demp); }
 .delsum { display: flex; gap: 14px; margin-top: 8px; color: var(--demp); font-size: 13.5px; flex-wrap: wrap; }
 .delsum b { color: CanvasText; }
 .status { font-size: 12.5px; color: var(--demp); margin-top: 10px; }
+.skjema { display: flex; gap: 6px; align-items: center; margin-top: 10px; font-size: 13px; color: var(--demp); }
+.skjema button { font: 600 12.5px -apple-system, system-ui; padding: 5px 11px; border-radius: 999px;
+  border: 1px solid var(--linje); background: var(--flate); color: inherit; cursor: pointer; }
+.skjema button.aktiv { background: var(--norge); border-color: var(--norge); color: #fff; }
+.ko-runde { display: flex; justify-content: space-between; padding: 8px 4px;
+  border-top: 1px solid var(--linje); font-size: 14px; }
+nav { position: sticky; top: 0; z-index: 5; display: flex; gap: 6px; flex-wrap: wrap;
+  padding: 8px 0; background: Canvas; border-bottom: 1px solid var(--linje); }
+nav button { font: 600 13px -apple-system, system-ui; padding: 7px 12px;
+  border-radius: 999px; border: 1px solid var(--linje); background: var(--flate);
+  color: inherit; cursor: pointer; }
+nav button.aktiv { background: var(--norge); border-color: var(--norge); color: #fff; }
 details.dag { border-bottom: 1px solid var(--linje); }
 details.dag > summary { list-style: none; display: flex; align-items: center;
   justify-content: space-between; gap: 8px; padding: 12px 4px; cursor: pointer; }
 summary::-webkit-details-marker { display: none; }
-.dato { font-weight: 650; }
+.dato { font-weight: 650; font-size: 15.5px; }
+.idag-mark .dato { color: var(--norge); }
+.idag-mark .dato::after { content: " · i dag"; font-weight: 400; font-size: 12px; }
 .meta { display: flex; align-items: center; gap: 8px; color: var(--demp); font-size: 12.5px; }
-.dagsum { font-weight: 750; font-size: 14px; color: var(--grønn); }
-.dagsum.null { color: var(--demp); }
+.fase { text-transform: uppercase; letter-spacing: .05em; font-size: 11px; }
+.chip { background: color-mix(in srgb, var(--norge) 15%, transparent);
+  color: var(--norge); font-weight: 650; font-size: 11.5px; padding: 3px 8px; border-radius: 999px; }
+.dagsum { font-weight: 750; font-size: 13.5px; color: var(--grønn); }
 .pil { width: 8px; height: 8px; border-right: 1.5px solid var(--demp);
   border-bottom: 1.5px solid var(--demp); transform: rotate(45deg); transition: transform .15s; }
 details[open] .pil { transform: rotate(-135deg); }
@@ -45,34 +62,37 @@ details[open] .pil { transform: rotate(-135deg); }
 .p10 { background: color-mix(in srgb, var(--grønn) 10%, transparent); color: var(--grønn); }
 .p5 { background: color-mix(in srgb, var(--gul) 15%, transparent); color: var(--gul); }
 .p0 { background: var(--flate); color: var(--demp); }
+.ptip { background: var(--flate); color: CanvasText; font-weight: 700; }
 .live { outline: 1.5px dashed var(--demp); outline-offset: -1.5px; }
 .k.norge { border-left: 3px solid var(--norge); padding-left: 8px;
   background: color-mix(in srgb, var(--norge) 6%, transparent); border-radius: 6px; }
-.skjema { display: flex; gap: 6px; align-items: center; margin-top: 10px; font-size: 13px; color: var(--demp); }
-.skjema button { font: 600 12.5px -apple-system, system-ui; padding: 5px 11px; border-radius: 999px;
-  border: 1px solid var(--linje); background: var(--flate); color: inherit; cursor: pointer; }
-.skjema button.aktiv { background: var(--norge); border-color: var(--norge); color: #fff; }
-.ko-runde { display: flex; justify-content: space-between; padding: 8px 4px;
-  border-top: 1px solid var(--linje); font-size: 14px; }
-.ko-runde b { font-variant-numeric: tabular-nums; }
+body.bare-norge details.dag:not(.har-norge) { display: none; }
+body.bare-norge .k:not(.norge) { display: none; }
 footer { margin-top: 22px; font-size: 12px; color: var(--demp); line-height: 1.5; }
 #feil { color: var(--norge); font-weight: 600; padding: 12px 0; }
 .skel { color: var(--demp); padding: 14px 4px; }
 </style></head><body>
 <header>
-<h1>VM-poengene mine</h1>
-<p>Marius-puljen · tipsene fra arket ditt · resultater hentes live når du åpner siden</p>
+<h1>VM 2026</h1>
+<div class="lenker"><span>Marius-puljen · poeng og program</span>
+<a href="tipping.html">Hele innleveringen →</a></div>
 </header>
 <div class="kort" id="totalkort"><div class="skel">Henter resultater …</div></div>
 <div id="feil" hidden></div>
 <div id="sluttspill"></div>
-<div id="dager"></div>
-<footer>Poengregler: 5 riktig utfall, +5 riktig målforskjell, +10 eksakt resultat, opptil +3 bonus i kamper
-med 4+ mål (bonusen er vår tolkning av Marius' regel — kan avvike med ±noen poeng).
-Sluttspill: poeng per riktig lag videre per runde etter valgt skjema.
-Resultatkilde: VG Live (kun resultater — poengene er Marius-puljens, ikke VG Profetens).</footer>
+<nav>
+<button id="btn-idag">Til i dag</button>
+<button id="btn-apne">Åpne alle</button>
+<button id="btn-lukk">Lukk alle</button>
+<button id="btn-norge">Bare Norge</button>
+</nav>
+<div id="dager"><div class="skel">Henter kampprogram …</div></div>
+<footer>Poengregler (Marius-puljen): 5 riktig utfall, +5 riktig målforskjell, +10 eksakt, opptil +3 bonus
+i kamper med 4+ mål (bonusen er vår tolkning). Sluttspill: poeng per riktig lag videre per runde etter
+valgt skjema. Sluttspillkamper viser tipset ditt til lagene er avklart, deretter de ekte lagene.
+Resultatkilde: VG Live (kun resultater).</footer>
 <script>
-const D = {"tips":{"729655":[1,0],"729645":[2,0],"729568":[1,0],"729559":[0,2],"729579":[1,0],"729586":[0,1],"729651":[0,1],"729609":[2,0],"729563":[1,0],"729600":[0,1],"729649":[1,0],"729562":[2,0],"729585":[1,0],"729570":[0,2],"729574":[1,0],"729606":[1,0],"729658":[0,1],"729589":[1,0],"729588":[1,0],"729659":[2,0],"729599":[1,0],"729592":[0,1],"729598":[0,1],"729650":[1,0],"729656":[2,0],"729565":[2,0],"729558":[1,0],"729566":[1,0],"729583":[0,1],"729561":[2,0],"729654":[1,0],"729653":[1,0],"729591":[2,0],"729603":[2,0],"729567":[0,2],"729578":[2,0],"729575":[1,0],"729577":[2,0],"729580":[1,1],"729587":[1,0],"729662":[2,0],"729595":[1,0],"729597":[1,1],"729604":[2,0],"729593":[2,0],"729608":[0,1],"729657":[1,0],"729571":[1,0],"729646":[1,0],"729564":[2,0],"729573":[0,2],"729557":[0,1],"729648":[0,1],"729602":[0,1],"729605":[0,1],"729582":[0,2],"729652":[1,1],"729572":[0,1],"729647":[1,1],"729590":[0,1],"729661":[1,0],"729576":[0,1],"729584":[1,1],"729569":[0,2],"729581":[0,1],"729601":[0,2],"729607":[2,0],"729596":[0,1],"729660":[1,1],"729594":[0,1],"729610":[0,2],"674655":[0,1],"675245":[1,0],"674654":[1,0],"674656":[1,0],"675227":[1,0],"675225":[0,1],"675240":[1,0],"675242":[1,0],"675229":[2,0],"675248":[1,0],"675244":[1,0],"675230":[1,0],"675228":[1,0],"675222":[1,0],"675243":[1,0],"674653":[1,0],"675232":[0,1],"675231":[0,1],"675247":[0,1],"675246":[0,1],"675226":[0,1],"675224":[0,1],"675233":[1,0],"675241":[0,1],"675223":[0,1],"675234":[1,0],"675237":[0,1],"675249":[1,0],"675236":[0,1],"675238":[1,0],"675239":[1,0],"675235":[1,0],"729560":[2,0]},"ourRounds":{"R16":["Argentina","Belgia","Brasil","Canada","Colombia","England","Frankrike","Mexico","Nederland","Norge","Portugal","Spania","Sveits","Tyrkia","Tyskland","USA"],"QF":["Argentina","Belgia","England","Frankrike","Nederland","Norge","Portugal","Spania"],"SF":["Argentina","England","Frankrike","Spania"],"Final":["England","Spania"]},"ourChampion":"Spania","ourBronze":"Frankrike","koEvents":{"R16":[675231,675232,675247,675246,675226,675224,675233,675241],"QF":[675223,675234,675237,675249],"SF":[675236,675238],"Final":[675235],"bronze":675239,"final":675235},"groupEventMax":729000,"schemes":{"A":{"team":10,"bronze":10,"champion":10},"B":{"team":15,"bronze":25,"champion":25},"C":{"team":20,"bronze":50,"champion":50}},"events":{"729560":{"d":"2026-06-11T19","h":"Mexico","a":"Sør-Afrika","st":null},"729655":{"d":"2026-06-12T02","h":"Sør-Korea","a":"Tsjekkia","st":null},"729645":{"d":"2026-06-12T19","h":"Canada","a":"Bosnia-Hercegovina","st":null},"729568":{"d":"2026-06-13T01","h":"USA","a":"Paraguay","st":null},"729559":{"d":"2026-06-13T19","h":"Qatar","a":"Sveits","st":null},"729579":{"d":"2026-06-13T22","h":"Brasil","a":"Marokko","st":null},"729586":{"d":"2026-06-14T01","h":"Haiti","a":"Skottland","st":null},"729651":{"d":"2026-06-14T04","h":"Australia","a":"Tyrkia","st":null},"729609":{"d":"2026-06-14T17","h":"Tyskland","a":"Curaçao","st":null},"729563":{"d":"2026-06-14T20","h":"Nederland","a":"Japan","st":null},"729600":{"d":"2026-06-14T23","h":"Elfenbenskysten","a":"Ecuador","st":null},"729649":{"d":"2026-06-15T02","h":"Sverige","a":"Tunisia","st":null},"729562":{"d":"2026-06-15T16","h":"Spania","a":"Kapp Verde","st":null},"729585":{"d":"2026-06-15T19","h":"Belgia","a":"Egypt","st":null},"729570":{"d":"2026-06-15T22","h":"Saudi-Arabia","a":"Uruguay","st":null},"729574":{"d":"2026-06-16T01","h":"Iran","a":"New Zealand","st":null},"729606":{"d":"2026-06-16T19","h":"Frankrike","a":"Senegal","st":null},"729658":{"d":"2026-06-16T22","h":"Irak","a":"Norge","st":null},"729589":{"d":"2026-06-17T01","h":"Argentina","a":"Algerie","st":null},"729588":{"d":"2026-06-17T04","h":"Østerrike","a":"Jordan","st":null},"729659":{"d":"2026-06-17T17","h":"Portugal","a":"DR Kongo","st":null},"729599":{"d":"2026-06-17T20","h":"England","a":"Kroatia","st":null},"729592":{"d":"2026-06-17T23","h":"Ghana","a":"Panama","st":null},"729598":{"d":"2026-06-18T02","h":"Usbekistan","a":"Colombia","st":null},"729650":{"d":"2026-06-18T16","h":"Tsjekkia","a":"Sør-Afrika","st":null},"729656":{"d":"2026-06-18T19","h":"Sveits","a":"Bosnia-Hercegovina","st":null},"729565":{"d":"2026-06-18T22","h":"Canada","a":"Qatar","st":null},"729558":{"d":"2026-06-19T01","h":"Mexico","a":"Sør-Korea","st":null},"729566":{"d":"2026-06-19T19","h":"USA","a":"Australia","st":null},"729583":{"d":"2026-06-19T22","h":"Skottland","a":"Marokko","st":null},"729561":{"d":"2026-06-20T00","h":"Brasil","a":"Haiti","st":null},"729654":{"d":"2026-06-20T03","h":"Tyrkia","a":"Paraguay","st":null},"729653":{"d":"2026-06-20T17","h":"Nederland","a":"Sverige","st":null},"729591":{"d":"2026-06-20T20","h":"Tyskland","a":"Elfenbenskysten","st":null},"729603":{"d":"2026-06-21T00","h":"Ecuador","a":"Curaçao","st":null},"729567":{"d":"2026-06-21T04","h":"Tunisia","a":"Japan","st":null},"729578":{"d":"2026-06-21T16","h":"Spania","a":"Saudi-Arabia","st":null},"729575":{"d":"2026-06-21T19","h":"Belgia","a":"Iran","st":null},"729577":{"d":"2026-06-21T22","h":"Uruguay","a":"Kapp Verde","st":null},"729580":{"d":"2026-06-22T01","h":"New Zealand","a":"Egypt","st":null},"729587":{"d":"2026-06-22T17","h":"Argentina","a":"Østerrike","st":null},"729662":{"d":"2026-06-22T21","h":"Frankrike","a":"Irak","st":null},"729595":{"d":"2026-06-23T00","h":"Norge","a":"Senegal","st":null},"729597":{"d":"2026-06-23T03","h":"Jordan","a":"Algerie","st":null},"729604":{"d":"2026-06-23T17","h":"Portugal","a":"Usbekistan","st":null},"729593":{"d":"2026-06-23T20","h":"England","a":"Ghana","st":null},"729608":{"d":"2026-06-23T23","h":"Panama","a":"Kroatia","st":null},"729657":{"d":"2026-06-24T02","h":"Colombia","a":"DR Kongo","st":null},"729571":{"d":"2026-06-24T19","h":"Sveits","a":"Canada","st":null},"729646":{"d":"2026-06-24T19","h":"Bosnia-Hercegovina","a":"Qatar","st":null},"729564":{"d":"2026-06-24T22","h":"Marokko","a":"Haiti","st":null},"729573":{"d":"2026-06-24T22","h":"Skottland","a":"Brasil","st":null},"729557":{"d":"2026-06-25T01","h":"Sør-Afrika","a":"Sør-Korea","st":null},"729648":{"d":"2026-06-25T01","h":"Tsjekkia","a":"Mexico","st":null},"729602":{"d":"2026-06-25T20","h":"Curaçao","a":"Elfenbenskysten","st":null},"729605":{"d":"2026-06-25T20","h":"Ecuador","a":"Tyskland","st":null},"729582":{"d":"2026-06-25T23","h":"Tunisia","a":"Nederland","st":null},"729652":{"d":"2026-06-25T23","h":"Japan","a":"Sverige","st":null},"729572":{"d":"2026-06-26T02","h":"Paraguay","a":"Australia","st":null},"729647":{"d":"2026-06-26T02","h":"Tyrkia","a":"USA","st":null},"729590":{"d":"2026-06-26T19","h":"Norge","a":"Frankrike","st":null},"729661":{"d":"2026-06-26T19","h":"Senegal","a":"Irak","st":null},"729576":{"d":"2026-06-27T00","h":"Uruguay","a":"Spania","st":null},"729584":{"d":"2026-06-27T00","h":"Kapp Verde","a":"Saudi-Arabia","st":null},"729569":{"d":"2026-06-27T03","h":"New Zealand","a":"Belgia","st":null},"729581":{"d":"2026-06-27T03","h":"Egypt","a":"Iran","st":null},"729601":{"d":"2026-06-27T21","h":"Panama","a":"England","st":null},"729607":{"d":"2026-06-27T21","h":"Kroatia","a":"Ghana","st":null},"729596":{"d":"2026-06-27T23","h":"Colombia","a":"Portugal","st":null},"729660":{"d":"2026-06-27T23","h":"DR Kongo","a":"Usbekistan","st":null},"729594":{"d":"2026-06-28T02","h":"Algerie","a":"Østerrike","st":null},"729610":{"d":"2026-06-28T02","h":"Jordan","a":"Argentina","st":null},"674655":{"d":"2026-06-28T19","h":"Sør-Korea","a":"Canada","st":"16-delsfinale"},"674656":{"d":"2026-06-29T17","h":"Brasil","a":"Japan","st":"16-delsfinale"},"675245":{"d":"2026-06-29T20","h":"Tyskland","a":"Australia","st":"16-delsfinale"},"674654":{"d":"2026-06-30T01","h":"Nederland","a":"Marokko","st":"16-delsfinale"},"675225":{"d":"2026-06-30T17","h":"Ecuador","a":"Norge","st":"16-delsfinale"},"675227":{"d":"2026-06-30T21","h":"Frankrike","a":"Sverige","st":"16-delsfinale"},"675240":{"d":"2026-07-01T01","h":"Mexico","a":"Skottland","st":"16-delsfinale"},"675242":{"d":"2026-07-01T16","h":"England","a":"Senegal","st":"16-delsfinale"},"675248":{"d":"2026-07-01T20","h":"Belgia","a":"Tsjekkia","st":"16-delsfinale"},"675229":{"d":"2026-07-02T00","h":"USA","a":"Bosnia-Hercegovina","st":"16-delsfinale"},"675230":{"d":"2026-07-02T19","h":"Spania","a":"Østerrike","st":"16-delsfinale"},"675244":{"d":"2026-07-02T23","h":"Colombia","a":"Kroatia","st":"16-delsfinale"},"675228":{"d":"2026-07-03T03","h":"Sveits","a":"Elfenbenskysten","st":"16-delsfinale"},"674653":{"d":"2026-07-03T18","h":"Tyrkia","a":"Iran","st":"16-delsfinale"},"675222":{"d":"2026-07-03T22","h":"Argentina","a":"Uruguay","st":"16-delsfinale"},"675243":{"d":"2026-07-04T01","h":"Portugal","a":"Panama","st":"16-delsfinale"},"675231":{"d":"2026-07-04T17","h":"Canada","a":"Nederland","st":"Åttendedelsfinale"},"675232":{"d":"2026-07-04T21","h":"Tyskland","a":"Frankrike","st":"Åttendedelsfinale"},"675247":{"d":"2026-07-05T20","h":"Brasil","a":"Norge","st":"Åttendedelsfinale"},"675246":{"d":"2026-07-06T00","h":"Mexico","a":"England","st":"Åttendedelsfinale"},"675226":{"d":"2026-07-06T19","h":"Colombia","a":"Spania","st":"Åttendedelsfinale"},"675224":{"d":"2026-07-07T00","h":"USA","a":"Belgia","st":"Åttendedelsfinale"},"675233":{"d":"2026-07-07T16","h":"Argentina","a":"Tyrkia","st":"Åttendedelsfinale"},"675241":{"d":"2026-07-07T20","h":"Sveits","a":"Portugal","st":"Åttendedelsfinale"},"675223":{"d":"2026-07-09T20","h":"Nederland","a":"Frankrike","st":"Kvartfinale"},"675234":{"d":"2026-07-10T19","h":"Spania","a":"Belgia","st":"Kvartfinale"},"675237":{"d":"2026-07-11T21","h":"Norge","a":"England","st":"Kvartfinale"},"675249":{"d":"2026-07-12T01","h":"Argentina","a":"Portugal","st":"Kvartfinale"},"675236":{"d":"2026-07-14T19","h":"Frankrike","a":"Spania","st":"Semifinale"},"675238":{"d":"2026-07-15T19","h":"England","a":"Argentina","st":"Semifinale"},"675239":{"d":"2026-07-18T21","h":"Frankrike","a":"Argentina","st":"Bronsefinale"},"675235":{"d":"2026-07-19T19","h":"Spania","a":"England","st":"FINALE"}},"allTeams":["Algerie","Argentina","Australia","Belgia","Bosnia-Hercegovina","Brasil","Canada","Colombia","Curaçao","DR Kongo","Ecuador","Egypt","Elfenbenskysten","England","Frankrike","Ghana","Haiti","Irak","Iran","Japan","Jordan","Kapp Verde","Kroatia","Marokko","Mexico","Nederland","New Zealand","Norge","Panama","Paraguay","Portugal","Qatar","Saudi-Arabia","Senegal","Skottland","Spania","Sveits","Sverige","Sør-Afrika","Sør-Korea","Tsjekkia","Tunisia","Tyrkia","Tyskland","USA","Uruguay","Usbekistan","Østerrike"]};
+const D = {"tips":{"729655":[1,0],"729645":[2,0],"729568":[1,0],"729559":[0,2],"729579":[1,0],"729586":[0,1],"729651":[0,1],"729609":[2,0],"729563":[1,0],"729600":[0,1],"729649":[1,0],"729562":[2,0],"729585":[1,0],"729570":[0,2],"729574":[1,0],"729606":[1,0],"729658":[0,1],"729589":[1,0],"729588":[1,0],"729659":[2,0],"729599":[1,0],"729592":[0,1],"729598":[0,1],"729650":[1,0],"729656":[2,0],"729565":[2,0],"729558":[1,0],"729566":[1,0],"729583":[0,1],"729561":[2,0],"729654":[1,0],"729653":[1,0],"729591":[2,0],"729603":[2,0],"729567":[0,2],"729578":[2,0],"729575":[1,0],"729577":[2,0],"729580":[1,1],"729587":[1,0],"729662":[2,0],"729595":[1,0],"729597":[1,1],"729604":[2,0],"729593":[2,0],"729608":[0,1],"729657":[1,0],"729571":[1,0],"729646":[1,0],"729564":[2,0],"729573":[0,2],"729557":[0,1],"729648":[0,1],"729602":[0,1],"729605":[0,1],"729582":[0,2],"729652":[1,1],"729572":[0,1],"729647":[1,1],"729590":[0,1],"729661":[1,0],"729576":[0,1],"729584":[1,1],"729569":[0,2],"729581":[0,1],"729601":[0,2],"729607":[2,0],"729596":[0,1],"729660":[1,1],"729594":[0,1],"729610":[0,2],"674655":[0,1],"675245":[1,0],"674654":[1,0],"674656":[1,0],"675227":[1,0],"675225":[0,1],"675240":[1,0],"675242":[1,0],"675229":[2,0],"675248":[1,0],"675244":[1,0],"675230":[1,0],"675228":[1,0],"675222":[1,0],"675243":[1,0],"674653":[1,0],"675232":[0,1],"675231":[0,1],"675247":[0,1],"675246":[0,1],"675226":[0,1],"675224":[0,1],"675233":[1,0],"675241":[0,1],"675223":[0,1],"675234":[1,0],"675237":[0,1],"675249":[1,0],"675236":[0,1],"675238":[1,0],"675239":[1,0],"675235":[1,0],"729560":[2,0]},"ourRounds":{"R16":["Argentina","Belgia","Brasil","Canada","Colombia","England","Frankrike","Mexico","Nederland","Norge","Portugal","Spania","Sveits","Tyrkia","Tyskland","USA"],"QF":["Argentina","Belgia","England","Frankrike","Nederland","Norge","Portugal","Spania"],"SF":["Argentina","England","Frankrike","Spania"],"Final":["England","Spania"]},"ourChampion":"Spania","ourBronze":"Frankrike","koEvents":{"R16":[675231,675232,675247,675246,675226,675224,675233,675241],"QF":[675223,675234,675237,675249],"SF":[675236,675238],"bronze":675239,"final":675235,"Final":[675235]},"groupEventMax":729000,"schemes":{"A":{"team":10,"bronze":10,"champion":10},"B":{"team":15,"bronze":25,"champion":25},"C":{"team":20,"bronze":50,"champion":50}},"events":{"729560":{"d":"2026-06-11T19","h":"Mexico","a":"Sør-Afrika","st":null},"729655":{"d":"2026-06-12T02","h":"Sør-Korea","a":"Tsjekkia","st":null},"729645":{"d":"2026-06-12T19","h":"Canada","a":"Bosnia-Hercegovina","st":null},"729568":{"d":"2026-06-13T01","h":"USA","a":"Paraguay","st":null},"729559":{"d":"2026-06-13T19","h":"Qatar","a":"Sveits","st":null},"729579":{"d":"2026-06-13T22","h":"Brasil","a":"Marokko","st":null},"729586":{"d":"2026-06-14T01","h":"Haiti","a":"Skottland","st":null},"729651":{"d":"2026-06-14T04","h":"Australia","a":"Tyrkia","st":null},"729609":{"d":"2026-06-14T17","h":"Tyskland","a":"Curaçao","st":null},"729563":{"d":"2026-06-14T20","h":"Nederland","a":"Japan","st":null},"729600":{"d":"2026-06-14T23","h":"Elfenbenskysten","a":"Ecuador","st":null},"729649":{"d":"2026-06-15T02","h":"Sverige","a":"Tunisia","st":null},"729562":{"d":"2026-06-15T16","h":"Spania","a":"Kapp Verde","st":null},"729585":{"d":"2026-06-15T19","h":"Belgia","a":"Egypt","st":null},"729570":{"d":"2026-06-15T22","h":"Saudi-Arabia","a":"Uruguay","st":null},"729574":{"d":"2026-06-16T01","h":"Iran","a":"New Zealand","st":null},"729606":{"d":"2026-06-16T19","h":"Frankrike","a":"Senegal","st":null},"729658":{"d":"2026-06-16T22","h":"Irak","a":"Norge","st":null},"729589":{"d":"2026-06-17T01","h":"Argentina","a":"Algerie","st":null},"729588":{"d":"2026-06-17T04","h":"Østerrike","a":"Jordan","st":null},"729659":{"d":"2026-06-17T17","h":"Portugal","a":"DR Kongo","st":null},"729599":{"d":"2026-06-17T20","h":"England","a":"Kroatia","st":null},"729592":{"d":"2026-06-17T23","h":"Ghana","a":"Panama","st":null},"729598":{"d":"2026-06-18T02","h":"Usbekistan","a":"Colombia","st":null},"729650":{"d":"2026-06-18T16","h":"Tsjekkia","a":"Sør-Afrika","st":null},"729656":{"d":"2026-06-18T19","h":"Sveits","a":"Bosnia-Hercegovina","st":null},"729565":{"d":"2026-06-18T22","h":"Canada","a":"Qatar","st":null},"729558":{"d":"2026-06-19T01","h":"Mexico","a":"Sør-Korea","st":null},"729566":{"d":"2026-06-19T19","h":"USA","a":"Australia","st":null},"729583":{"d":"2026-06-19T22","h":"Skottland","a":"Marokko","st":null},"729561":{"d":"2026-06-20T00","h":"Brasil","a":"Haiti","st":null},"729654":{"d":"2026-06-20T03","h":"Tyrkia","a":"Paraguay","st":null},"729653":{"d":"2026-06-20T17","h":"Nederland","a":"Sverige","st":null},"729591":{"d":"2026-06-20T20","h":"Tyskland","a":"Elfenbenskysten","st":null},"729603":{"d":"2026-06-21T00","h":"Ecuador","a":"Curaçao","st":null},"729567":{"d":"2026-06-21T04","h":"Tunisia","a":"Japan","st":null},"729578":{"d":"2026-06-21T16","h":"Spania","a":"Saudi-Arabia","st":null},"729575":{"d":"2026-06-21T19","h":"Belgia","a":"Iran","st":null},"729577":{"d":"2026-06-21T22","h":"Uruguay","a":"Kapp Verde","st":null},"729580":{"d":"2026-06-22T01","h":"New Zealand","a":"Egypt","st":null},"729587":{"d":"2026-06-22T17","h":"Argentina","a":"Østerrike","st":null},"729662":{"d":"2026-06-22T21","h":"Frankrike","a":"Irak","st":null},"729595":{"d":"2026-06-23T00","h":"Norge","a":"Senegal","st":null},"729597":{"d":"2026-06-23T03","h":"Jordan","a":"Algerie","st":null},"729604":{"d":"2026-06-23T17","h":"Portugal","a":"Usbekistan","st":null},"729593":{"d":"2026-06-23T20","h":"England","a":"Ghana","st":null},"729608":{"d":"2026-06-23T23","h":"Panama","a":"Kroatia","st":null},"729657":{"d":"2026-06-24T02","h":"Colombia","a":"DR Kongo","st":null},"729571":{"d":"2026-06-24T19","h":"Sveits","a":"Canada","st":null},"729646":{"d":"2026-06-24T19","h":"Bosnia-Hercegovina","a":"Qatar","st":null},"729564":{"d":"2026-06-24T22","h":"Marokko","a":"Haiti","st":null},"729573":{"d":"2026-06-24T22","h":"Skottland","a":"Brasil","st":null},"729557":{"d":"2026-06-25T01","h":"Sør-Afrika","a":"Sør-Korea","st":null},"729648":{"d":"2026-06-25T01","h":"Tsjekkia","a":"Mexico","st":null},"729602":{"d":"2026-06-25T20","h":"Curaçao","a":"Elfenbenskysten","st":null},"729605":{"d":"2026-06-25T20","h":"Ecuador","a":"Tyskland","st":null},"729582":{"d":"2026-06-25T23","h":"Tunisia","a":"Nederland","st":null},"729652":{"d":"2026-06-25T23","h":"Japan","a":"Sverige","st":null},"729572":{"d":"2026-06-26T02","h":"Paraguay","a":"Australia","st":null},"729647":{"d":"2026-06-26T02","h":"Tyrkia","a":"USA","st":null},"729590":{"d":"2026-06-26T19","h":"Norge","a":"Frankrike","st":null},"729661":{"d":"2026-06-26T19","h":"Senegal","a":"Irak","st":null},"729576":{"d":"2026-06-27T00","h":"Uruguay","a":"Spania","st":null},"729584":{"d":"2026-06-27T00","h":"Kapp Verde","a":"Saudi-Arabia","st":null},"729569":{"d":"2026-06-27T03","h":"New Zealand","a":"Belgia","st":null},"729581":{"d":"2026-06-27T03","h":"Egypt","a":"Iran","st":null},"729601":{"d":"2026-06-27T21","h":"Panama","a":"England","st":null},"729607":{"d":"2026-06-27T21","h":"Kroatia","a":"Ghana","st":null},"729596":{"d":"2026-06-27T23","h":"Colombia","a":"Portugal","st":null},"729660":{"d":"2026-06-27T23","h":"DR Kongo","a":"Usbekistan","st":null},"729594":{"d":"2026-06-28T02","h":"Algerie","a":"Østerrike","st":null},"729610":{"d":"2026-06-28T02","h":"Jordan","a":"Argentina","st":null},"674655":{"d":"2026-06-28T19","h":"Sør-Korea","a":"Canada","st":"16-delsfinale","adv":"Canada"},"674656":{"d":"2026-06-29T17","h":"Brasil","a":"Japan","st":"16-delsfinale","adv":"Brasil"},"675245":{"d":"2026-06-29T20","h":"Tyskland","a":"Australia","st":"16-delsfinale","adv":"Tyskland"},"674654":{"d":"2026-06-30T01","h":"Nederland","a":"Marokko","st":"16-delsfinale","adv":"Nederland"},"675225":{"d":"2026-06-30T17","h":"Ecuador","a":"Norge","st":"16-delsfinale","adv":"Norge"},"675227":{"d":"2026-06-30T21","h":"Frankrike","a":"Sverige","st":"16-delsfinale","adv":"Frankrike"},"675240":{"d":"2026-07-01T01","h":"Mexico","a":"Skottland","st":"16-delsfinale","adv":"Mexico"},"675242":{"d":"2026-07-01T16","h":"England","a":"Senegal","st":"16-delsfinale","adv":"England"},"675248":{"d":"2026-07-01T20","h":"Belgia","a":"Tsjekkia","st":"16-delsfinale","adv":"Belgia"},"675229":{"d":"2026-07-02T00","h":"USA","a":"Bosnia-Hercegovina","st":"16-delsfinale","adv":"USA"},"675230":{"d":"2026-07-02T19","h":"Spania","a":"Østerrike","st":"16-delsfinale","adv":"Spania"},"675244":{"d":"2026-07-02T23","h":"Colombia","a":"Kroatia","st":"16-delsfinale","adv":"Colombia"},"675228":{"d":"2026-07-03T03","h":"Sveits","a":"Elfenbenskysten","st":"16-delsfinale","adv":"Sveits"},"674653":{"d":"2026-07-03T18","h":"Tyrkia","a":"Iran","st":"16-delsfinale","adv":"Tyrkia"},"675222":{"d":"2026-07-03T22","h":"Argentina","a":"Uruguay","st":"16-delsfinale","adv":"Argentina"},"675243":{"d":"2026-07-04T01","h":"Portugal","a":"Panama","st":"16-delsfinale","adv":"Portugal"},"675231":{"d":"2026-07-04T17","h":"Canada","a":"Nederland","st":"Åttendedelsfinale","adv":"Nederland"},"675232":{"d":"2026-07-04T21","h":"Tyskland","a":"Frankrike","st":"Åttendedelsfinale","adv":"Frankrike"},"675247":{"d":"2026-07-05T20","h":"Brasil","a":"Norge","st":"Åttendedelsfinale","adv":"Norge"},"675246":{"d":"2026-07-06T00","h":"Mexico","a":"England","st":"Åttendedelsfinale","adv":"England"},"675226":{"d":"2026-07-06T19","h":"Colombia","a":"Spania","st":"Åttendedelsfinale","adv":"Spania"},"675224":{"d":"2026-07-07T00","h":"USA","a":"Belgia","st":"Åttendedelsfinale","adv":"Belgia"},"675233":{"d":"2026-07-07T16","h":"Argentina","a":"Tyrkia","st":"Åttendedelsfinale","adv":"Argentina"},"675241":{"d":"2026-07-07T20","h":"Sveits","a":"Portugal","st":"Åttendedelsfinale","adv":"Portugal"},"675223":{"d":"2026-07-09T20","h":"Nederland","a":"Frankrike","st":"Kvartfinale","adv":"Frankrike"},"675234":{"d":"2026-07-10T19","h":"Spania","a":"Belgia","st":"Kvartfinale","adv":"Spania"},"675237":{"d":"2026-07-11T21","h":"Norge","a":"England","st":"Kvartfinale","adv":"England"},"675249":{"d":"2026-07-12T01","h":"Argentina","a":"Portugal","st":"Kvartfinale","adv":"Argentina"},"675236":{"d":"2026-07-14T19","h":"Frankrike","a":"Spania","st":"Semifinale","adv":"Spania"},"675238":{"d":"2026-07-15T19","h":"England","a":"Argentina","st":"Semifinale","adv":"England"},"675239":{"d":"2026-07-18T21","h":"Frankrike","a":"Argentina","st":"Bronsefinale","adv":"Frankrike"},"675235":{"d":"2026-07-19T19","h":"Spania","a":"England","st":"FINALE","adv":"Spania"}}};
 const sgn = x => x > 0 ? 1 : x < 0 ? -1 : 0;
 function poeng(p, a) {
   let pts = 0;
@@ -90,111 +110,142 @@ const pillKl = p => p >= 20 ? 'p20' : p >= 10 ? 'p10' : p >= 5 ? 'p5' : 'p0';
 const WD = ['Søndag','Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag'];
 const MD = {5:'juni', 6:'juli'};
 let skjema = localStorage.getItem('vmSkjema') || 'A';
-
-function osloDato(utcStr) { // "2026-06-12T02" -> Date i Oslo (+2)
-  const d = new Date(utcStr + ':00:00Z');
-  return new Date(d.getTime() + 2*3600*1000); // vis-klokke i UTC-metoder
-}
+const kjent = new Set(D.allTeams);
+const oslo = s => new Date(new Date(s + ':00:00Z').getTime() + 2*3600*1000);
+const isoIdag = () => { const n = new Date(); return new Date(n.getTime() + 2*3600*1000 - n.getTimezoneOffset()*0).toISOString().slice(0,10); };
 
 fetch('https://vglive.vg.no/bff/vg/predictions-game/seasons/102/schedule?x=' + Date.now(),
       {headers: {accept: 'application/json'}})
-.then(r => r.json())
-.then(j => render(j))
-.catch(e => { document.getElementById('feil').hidden = false;
-  document.getElementById('feil').textContent = 'Fikk ikke hentet resultater (' + e + '). Prøv igjen om litt.';
-  document.querySelector('#totalkort .skel').textContent = 'Ingen data.'; });
+.then(r => r.json()).then(j => render(j))
+.catch(e => { const f = document.getElementById('feil'); f.hidden = false;
+  f.textContent = 'Fikk ikke hentet resultater (' + e + '). Dra ned for å laste på nytt.'; });
 
 function render(j) {
   const parts = j.participants || {};
   const pname = id => (parts[id] && parts[id].name) || String(id);
-  const rader = []; // {dag, tid, html-data}
-  let sumGruppe = 0, spilte = 0, liveSum = 0, antLive = 0;
+  let sumGruppe = 0, spilte = 0;
+  const rader = [];
 
-  for (const [idStr, tip] of Object.entries(D.tips)) {
-    const ev = j.events[idStr]; const meta = D.events[idStr];
-    if (!ev || !meta) continue;
-    const ferdig = ev.status && ev.status.type === 'finished';
-    const live = ev.status && ev.status.type === 'inProgress';
-    if (!ferdig && !live) continue;
-    const [hid, aid] = ev.participantIds;
-    const r = ev.results || {};
-    const hs = r[hid] ? (r[hid].regularTimeScore ?? r[hid].runningScore ?? 0) : 0;
-    const as_ = r[aid] ? (r[aid].regularTimeScore ?? r[aid].runningScore ?? 0) : 0;
-    const erKO = !!meta.st;
-    const p = erKO ? null : poeng(tip, [hs, as_]);
-    if (!erKO) { if (ferdig) { sumGruppe += p; spilte++; } else { liveSum += p; antLive++; } }
-    const t = osloDato(meta.d);
-    rader.push({dagKey: t.toISOString().slice(0,10), t, eid: idStr, meta, tip,
-                hs, as_, p, ferdig, live, erKO});
+  for (const [idStr, meta] of Object.entries(D.events)) {
+    const tip = D.tips[idStr]; const ev = j.events[idStr];
+    const t = oslo(meta.d);
+    const r = (ev && ev.results) || {};
+    const stype = ev && ev.status ? ev.status.type : 'notStarted';
+    const ferdig = stype === 'finished', live = stype === 'inProgress';
+    let h = meta.h, a = meta.a, hs = null, as_ = null, p = null, riktigAdv = null;
+    if (ev && (ferdig || live)) {
+      const [hid, aid] = ev.participantIds;
+      if (kjent.has(pname(hid))) { h = pname(hid); a = pname(aid); }
+      hs = r[hid] ? (r[hid].regularTimeScore ?? r[hid].runningScore ?? 0) : 0;
+      as_ = r[aid] ? (r[aid].regularTimeScore ?? r[aid].runningScore ?? 0) : 0;
+      if (!meta.st) { p = poeng(tip, [hs, as_]); if (ferdig) { sumGruppe += p; spilte++; } }
+      else if (ferdig) {
+        const rs = pid => r[pid] ? (r[pid].runningScore ?? 0) : 0;
+        const winner = pname(rs(hid) === rs(aid)
+          ? (r[hid] && r[hid].penaltyScore > (r[aid] ? r[aid].penaltyScore : 0) ? hid : aid)
+          : (rs(hid) > rs(aid) ? hid : aid));
+        riktigAdv = winner === meta.adv;
+      }
+    } else if (ev && !ferdig && !live && meta.st) {
+      const [hid, aid] = ev.participantIds;          // ekte lag klare før avspark
+      if (kjent.has(pname(hid))) { h = pname(hid); a = pname(aid); }
+    }
+    rader.push({dagKey: t.toISOString().slice(0,10), t, meta, tip, h, a, hs, as_, p,
+                ferdig, live, riktigAdv});
   }
 
-  // Totalkort
   const koInfo = beregnKO(j, pname);
-  const koSum = koInfo.sum;
-  const tot = sumGruppe + koSum;
-  let extra = antLive ? `<span> · live nå: +${liveSum} (ikke talt)</span>` : '';
+  const tot = sumGruppe + koInfo.sum;
   document.getElementById('totalkort').innerHTML =
     `<div class="total">${tot} <small>poeng</small></div>
-     <div class="delsum"><span>Gruppespill <b>${sumGruppe}</b> (${spilte} av 72 kamper)</span>
-     <span>Sluttspill <b>${koSum}</b></span>${extra}</div>
+     <div class="delsum"><span>Gruppespill <b>${sumGruppe}</b> (${spilte}/72)</span>
+     <span>Sluttspill <b>${koInfo.sum}</b></span>
+     <span>Snitt <b>${spilte ? (sumGruppe/spilte).toFixed(1) : '–'}</b>/kamp</span></div>
      <div class="skjema">Sluttspillskjema:
-       <button data-s="A">A</button><button data-s="B">B</button><button data-s="C">C</button>
-       <span>10/15/20 per lag</span></div>
-     <div class="status">Snitt ${spilte ? (sumGruppe/spilte).toFixed(1) : '–'} p/kamp · modellmål 6,1 ·
-       oppdatert ${new Date().toLocaleTimeString('no', {hour:'2-digit', minute:'2-digit'})}</div>`;
+       <button data-s="A">A</button><button data-s="B">B</button><button data-s="C">C</button></div>
+     <div class="status">Oppdatert ${new Date().toLocaleTimeString('no', {hour:'2-digit', minute:'2-digit'})}
+       · åpne siden på nytt for ferske tall</div>`;
   document.querySelectorAll('.skjema button').forEach(b => {
     if (b.dataset.s === skjema) b.classList.add('aktiv');
     b.onclick = () => { skjema = b.dataset.s; localStorage.setItem('vmSkjema', skjema); render(j); };
   });
-
-  // Sluttspillseksjon (vises når noe er avgjort)
   document.getElementById('sluttspill').innerHTML = koInfo.html;
 
-  // Dag-for-dag, nyeste først
   const dager = {};
   rader.forEach(r => (dager[r.dagKey] = dager[r.dagKey] || []).push(r));
-  const keys = Object.keys(dager).sort().reverse();
+  const idag = new Date(Date.now() + 2*3600*1000).toISOString().slice(0,10);
   let html = '';
-  keys.forEach((k, i) => {
+  for (const k of Object.keys(dager).sort()) {
     const ms = dager[k].sort((x,y) => x.t - y.t);
-    const dsum = ms.reduce((s,m) => s + (m.ferdig && !m.erKO ? m.p : 0), 0);
+    const dsum = ms.reduce((s,m) => s + (m.ferdig && !m.meta.st ? m.p : 0), 0);
+    const ferdigeIDag = ms.some(m => m.ferdig);
+    const harNorge = ms.some(m => m.h === 'Norge' || m.a === 'Norge');
     const t0 = ms[0].t;
-    const åpen = i === 0 ? ' open' : '';
-    html += `<details class="dag"${åpen}><summary>
+    const erIdag = k === idag;
+    html += `<details class="dag${harNorge ? ' har-norge' : ''}${erIdag ? ' idag-mark' : ''}"
+      data-dato="${k}"${erIdag ? ' open' : ''}><summary>
       <span class="dato">${WD[t0.getUTCDay()]} ${t0.getUTCDate()}. ${MD[t0.getUTCMonth()]}</span>
-      <span class="meta"><span class="dagsum${dsum ? '' : ' null'}">+${dsum} p</span>
-      <span>${ms.length} kamp${ms.length > 1 ? 'er' : ''}</span><span class="pil"></span></span></summary>`;
-    ms.forEach(m => {
-      const norge = (m.meta.h === 'Norge' || m.meta.a === 'Norge') ? ' norge' : '';
+      <span class="meta">${ms[0].meta.st ? `<span class="fase">${ms[0].meta.st}</span>` : ''}
+      ${harNorge ? '<span class="chip">Norge</span>' : ''}
+      ${ferdigeIDag ? `<span class="dagsum">+${dsum} p</span>` : ''}
+      <span>${ms.length}</span><span class="pil"></span></span></summary>`;
+    for (const m of ms) {
+      const norge = (m.h === 'Norge' || m.a === 'Norge') ? ' norge' : '';
       const stTag = m.meta.st ? `<span class="st">${m.meta.st}</span>` : '';
-      const liveTag = m.live ? `<span class="st">Pågår</span>` : '';
-      const pille = m.erKO
-        ? `<span class="p p0">lag-poeng</span>`
-        : `<span class="p ${pillKl(m.p)}${m.live ? ' live' : ''}">${m.live ? '~' : '+'}${m.p}</span>`;
+      const liveTag = m.live ? '<span class="st">Pågår</span>' : '';
+      let hoved, undertekst, pille;
+      if (m.ferdig || m.live) {
+        hoved = `${m.h} ${m.hs}–${m.as_} ${m.a}`;
+        undertekst = `Tipset ditt: ${m.tip[0]}–${m.tip[1]}`;
+        if (!m.meta.st) pille = `<span class="p ${pillKl(m.p)}${m.live ? ' live' : ''}">${m.live ? '~' : '+'}${m.p}</span>`;
+        else if (m.ferdig) pille = m.riktigAdv
+          ? '<span class="p p10">riktig videre</span>'
+          : '<span class="p p0">bom</span>';
+        else pille = `<span class="p ptip live">${m.tip[0]}–${m.tip[1]}</span>`;
+      } else {
+        hoved = `${m.h} <span style="color:var(--demp)">–</span> ${m.a}`;
+        undertekst = '';
+        pille = `<span class="p ptip">${m.tip[0]}–${m.tip[1]}</span>`;
+      }
       html += `<div class="k${norge}">
         <time>${String(m.t.getUTCHours()).padStart(2,'0')}:${String(m.t.getUTCMinutes()).padStart(2,'0')}</time>
-        <span class="lag"><span class="res">${m.meta.h} ${m.hs}–${m.as_} ${m.meta.a}</span>${stTag}${liveTag}
-        <span class="tipstxt">Tipset ditt: ${m.tip[0]}–${m.tip[1]}</span></span>${pille}</div>`;
-    });
+        <span class="lag"><span class="res">${hoved}</span>${stTag}${liveTag}
+        ${undertekst ? `<span class="tipstxt">${undertekst}</span>` : ''}</span>${pille}</div>`;
+    }
     html += '</details>';
-  });
-  document.getElementById('dager').innerHTML = html ||
-    '<div class="skel">Ingen kamper spilt ennå.</div>';
+  }
+  document.getElementById('dager').innerHTML = html;
+  kobleKnapper();
+}
+
+function kobleKnapper() {
+  const dg = [...document.querySelectorAll('details.dag')];
+  const idag = () => {
+    const nu = new Date(Date.now() + 2*3600*1000).toISOString().slice(0,10);
+    return dg.find(d => d.dataset.dato >= nu) || dg[dg.length-1];
+  };
+  document.getElementById('btn-idag').onclick = () => {
+    dg.forEach(d => d.open = false); const m = idag(); m.open = true;
+    m.scrollIntoView({behavior:'smooth', block:'start'}); };
+  document.getElementById('btn-apne').onclick = () => dg.forEach(d => d.open = true);
+  document.getElementById('btn-lukk').onclick = () => dg.forEach(d => d.open = false);
+  document.getElementById('btn-norge').onclick = e => {
+    document.body.classList.toggle('bare-norge');
+    e.target.classList.toggle('aktiv');
+    if (document.body.classList.contains('bare-norge'))
+      dg.forEach(d => { if (d.classList.contains('har-norge')) d.open = true; });
+  };
 }
 
 function beregnKO(j, pname) {
   const w = D.schemes[skjema];
-  const kjent = new Set(D.allTeams);
   let sum = 0; const linjer = [];
-  const runder = [['R16','Åttendedelslag', 'R16'], ['QF','Kvartfinalelag','QF'],
-                  ['SF','Semifinalelag','SF'], ['Final','Finalelag','Final']];
-  for (const [key, label] of runder) {
-    const evIds = D.koEvents[key];
+  for (const [key, label] of [['R16','Åttendedelslag'], ['QF','Kvartfinalelag'],
+                              ['SF','Semifinalelag'], ['Final','Finalelag']]) {
     const faktiske = new Set();
-    evIds.forEach(id => {
+    (D.koEvents[key] || []).forEach(id => {
       const ev = j.events[String(id)];
-      if (!ev) return;
-      ev.participantIds.forEach(pid => { const n = pname(pid); if (kjent.has(n)) faktiske.add(n); });
+      if (ev) ev.participantIds.forEach(pid => { const n = pname(pid); if (kjent.has(n)) faktiske.add(n); });
     });
     if (!faktiske.size) continue;
     const treff = D.ourRounds[key].filter(t => faktiske.has(t));
@@ -202,18 +253,16 @@ function beregnKO(j, pname) {
     linjer.push(`<div class="ko-runde"><span>${label}: ${treff.length} riktige av ${faktiske.size} klare</span>
                  <b>+${treff.length * w.team}</b></div>`);
   }
-  // bronse + mester
   for (const [evId, vår, vekt, label] of [[D.koEvents.bronze, D.ourBronze, w.bronze, 'Bronsevinner'],
-                                          [D.koEvents.final, D.ourChampion, w.champion, 'Verdensmester']]) {
+                                          [675235, D.ourChampion, w.champion, 'Verdensmester']]) {
     const ev = j.events[String(evId)];
     if (ev && ev.status && ev.status.type === 'finished') {
-      const [hid, aid] = ev.participantIds;
-      const r = ev.results || {};
-      const hs = r[hid] ? r[hid].runningScore : 0, as_ = r[aid] ? r[aid].runningScore : 0;
-      const vinner = pname(hs >= as_ ? hid : aid);
+      const [hid, aid] = ev.participantIds; const r = ev.results || {};
+      const rs = pid => r[pid] ? (r[pid].runningScore ?? 0) : 0;
+      const vinner = pname(rs(hid) >= rs(aid) ? hid : aid);
       const ok = vinner === vår;
       if (ok) sum += vekt;
-      linjer.push(`<div class="ko-runde"><span>${label}: ${vinner} (tips: ${vår})</span>
+      linjer.push(`<div class="ko-runde"><span>${label}: ${vinner} (tips ${vår})</span>
                    <b>${ok ? '+' + vekt : '0'}</b></div>`);
     }
   }
