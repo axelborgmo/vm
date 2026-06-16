@@ -71,6 +71,16 @@ body.bare-norge .k:not(.norge) { display: none; }
 footer { margin-top: 22px; font-size: 12px; color: var(--demp); line-height: 1.5; }
 #feil { color: var(--norge); font-weight: 600; padding: 12px 0; }
 .skel { color: var(--demp); padding: 14px 4px; }
+
+.samtopp { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+.samkilde { font-size:12px; color:var(--demp); }
+.sammenlagt-tab { width:100%; border-collapse:collapse; font-size:14.5px; }
+.sammenlagt-tab td { padding:8px 4px; border-top:1px solid var(--linje); }
+.sammenlagt-tab td.rank { color:var(--demp); width:26px; font-variant-numeric:tabular-nums; }
+.sammenlagt-tab td.pts { text-align:right; font-weight:750; font-variant-numeric:tabular-nums; }
+.sammenlagt-tab tr.meg td { background:color-mix(in srgb,var(--norge) 9%,transparent); font-weight:700; }
+.sammenlagt-tab tr.meg td.rank { color:var(--norge); }
+.samfot { font-size:12px; color:var(--demp); margin-top:10px; line-height:1.4; }
 </style></head><body>
 <header>
 <h1>VM 2026</h1>
@@ -80,6 +90,27 @@ footer { margin-top: 22px; font-size: 12px; color: var(--demp); line-height: 1.5
 <div class="kort" id="totalkort"><div class="skel">Henter resultater …</div></div>
 <div id="feil" hidden></div>
 <div id="sluttspill"></div>
+<div class="kort" id="sammenlagt">
+<div class="samtopp"><b>Sammenlagt — hele puljen</b><span class="samkilde">Marius' ark · per 16. juni</span></div>
+<table class="sammenlagt-tab">
+<tr><td class="rank">1</td><td>Odin Andersen Aardalen</td><td class="pts">85</td></tr>
+<tr><td class="rank">2</td><td>Marcus Anke</td><td class="pts">80</td></tr>
+<tr><td class="rank">3</td><td>Robin Torstensen</td><td class="pts">73</td></tr>
+<tr><td class="rank">4</td><td>Markus Havaas</td><td class="pts">66</td></tr>
+<tr class="meg"><td class="rank">5</td><td>Axel Møksvold Borgmo</td><td class="pts">65</td></tr>
+<tr><td class="rank">6</td><td>Tim Torstensen</td><td class="pts">60</td></tr>
+<tr><td class="rank">7</td><td>Espen Stenbrenden</td><td class="pts">58</td></tr>
+<tr><td class="rank">8</td><td>Kristian Stenbrenden</td><td class="pts">50</td></tr>
+<tr><td class="rank">9</td><td>Eivind Thorvaldsen</td><td class="pts">50</td></tr>
+<tr><td class="rank">10</td><td>Hans-Petter Oddvik</td><td class="pts">48</td></tr>
+<tr><td class="rank">11</td><td>Stine Molvær Torstensen</td><td class="pts">48</td></tr>
+<tr><td class="rank">12</td><td>Stian Løfshus</td><td class="pts">40</td></tr>
+<tr><td class="rank">13</td><td>Torje Martin Teigen</td><td class="pts">40</td></tr>
+<tr><td class="rank">14</td><td>Marius Strande Ottersen</td><td class="pts">38</td></tr>
+<tr><td class="rank">15</td><td>Simon Torstensen</td><td class="pts">35</td></tr>
+</table>
+<div class="samfot">Offisielle tall fra Marius' sammenlagtark (15 spillere). Dine live-poeng mot VG står i kortet øverst — her er stillingen slik Marius har ført den.</div>
+</div>
 <nav>
 <button id="btn-idag">Til i dag</button>
 <button id="btn-apne">Åpne alle</button>
