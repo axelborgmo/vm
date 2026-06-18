@@ -106,7 +106,7 @@ footer { margin-top: 22px; font-size: 12px; color: var(--demp); line-height: 1.5
 <div class="kort" id="sammenlagt">
 <div class="samtopp"><b>Sammenlagt — hele puljen</b><span class="samkilde" id="sam-kilde">Marius' ark</span></div>
 <table class="sammenlagt-tab"><tbody id="sam-body"><tr><td class="samfot">Laster …</td></tr></tbody></table>
-<div class="samfot">Offisielle tall speilet direkte fra Marius' sammenlagtark (15 spillere). Oppdateres når jeg leser arket på nytt. Dine egne live-poeng mot VG står i kortet øverst.</div>
+<div class="samfot">Regnes ut automatisk fra alles tipp + kampresultatene, med Marius' eksakte poengregler (verifisert 15/15 mot arket hans). Oppdaterer seg selv når nye kamper blir ferdige, så den kan ligge litt foran Marius' eget ark, som han fører for hånd.</div>
 </div>
 <nav>
 <button id="btn-idag">Til i dag</button>
@@ -274,16 +274,23 @@ function kobleKnapper() {
   };
 }
 
-// Offisielle sammenlagt-tall fra Marius' ark (speilet direkte, ikke VG-beregnet).
-// Oppdateres ved å lese arket på nytt.
-const OFFICIAL = {dato:"16. juni", totals:{
-  "Marcus Anke":140,"Robin Torstensen":123,"Espen Stenbrenden":123,"Odin Andersen Aardalen":120,
-  "Stine Molvær Torstensen":118,"Markus Havaas":111,"Torje Martin Teigen":110,"Hans-Petter Oddvik":108,
-  "Eivind Thorvaldsen":105,"Axel Møksvold Borgmo":95,"Tim Torstensen":90,"Kristian Stenbrenden":85,
-  "Stian Løfshus":85,"Marius Strande Ottersen":73,"Simon Torstensen":65}};
+// Live sammenlagt: regnes ut automatisk fra alles tipp + kampresultatene, med
+// Marius' EKSAKTE poengregler (verifisert 15/15 mot arket hans). Oppdaterer seg
+// selv når nye kamper blir ferdige — kan ligge foran Marius' håndførte ark.
 function sammenlagt(j){
-  const arr = Object.keys(OFFICIAL.totals).map(n=>({n:n,p:OFFICIAL.totals[n]}))
-    .sort((a,b)=> b.p-a.p);  // stabil: beholder arkets rekkefølge ved poenglikhet
+  const tot = {}; D2.persons.forEach(n => tot[n] = 0);
+  let nfin = 0;
+  for (const eid in D2.byVg){
+    const ev = j.events[eid];
+    if (!ev || !ev.status || ev.status.type !== 'finished') continue;
+    nfin++;
+    const ids = ev.participantIds; const r = ev.results || {};
+    const hs = r[ids[0]] ? (r[ids[0]].regularTimeScore ?? r[ids[0]].runningScore ?? 0) : 0;
+    const as_ = r[ids[1]] ? (r[ids[1]].regularTimeScore ?? r[ids[1]].runningScore ?? 0) : 0;
+    const preds = D2.byVg[eid];
+    for (const n in preds) tot[n] += poeng(preds[n], [hs, as_]);
+  }
+  const arr = D2.persons.map(n=>({n:n,p:tot[n]})).sort((a,b)=> b.p-a.p || a.n.localeCompare(b.n));
   let rank=1, prev=null;
   const body = arr.map(function(x,i){
     if (prev===null || x.p!==prev){ rank=i+1; prev=x.p; }
@@ -291,7 +298,7 @@ function sammenlagt(j){
     return '<tr'+meg+'><td class="rank">'+rank+'</td><td>'+x.n+'</td><td class="pts">'+x.p+'</td></tr>';
   }).join('');
   const el = document.getElementById('sam-body'); if (el) el.innerHTML = body;
-  const k = document.getElementById('sam-kilde'); if (k) k.textContent = "Marius' ark · per "+OFFICIAL.dato;
+  const k = document.getElementById('sam-kilde'); if (k) k.textContent = nfin+' kamper spilt · live';
 }
 
 function beregnKO(j, pname) {
