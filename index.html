@@ -112,6 +112,11 @@ tr.brk td { background:color-mix(in srgb,currentColor 4%,transparent); padding:8
 .brk-k { color:var(--demp); min-width:62px; flex-shrink:0; }
 .prsub { display:block; font-size:11px; color:var(--demp); font-weight:400; margin-top:1px; }
 .pp.ptip { background:var(--flate); color:CanvasText; }
+.forklar > summary { list-style:none; display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-weight:700; }
+.forklar[open] > summary { margin-bottom:6px; }
+.forklar .ftit { font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--demp); margin:12px 0 2px; }
+.forklar .ko-runde b { color:var(--grønn); }
+.forklar .fnote { font-size:12px; color:var(--demp); margin-top:8px; line-height:1.45; }
 </style></head><body>
 <header>
 <h1>VM 2026</h1>
@@ -120,8 +125,22 @@ tr.brk td { background:color-mix(in srgb,currentColor 4%,transparent); padding:8
 </header>
 <div class="kort" id="totalkort"><div class="skel">Henter resultater …</div></div>
 <div id="feil" hidden></div>
+<details class="kort forklar">
+<summary><span>Slik regnes poengene</span><span class="pil"></span></summary>
+<div class="fgruppe"><div class="ftit">Gruppespill (per kamp)</div>
+<div class="ko-runde"><span>Riktig vinner eller uavgjort</span><b>+5</b></div>
+<div class="ko-runde"><span>Riktig målforskjell (i tillegg)</span><b>+5</b></div>
+<div class="ko-runde"><span>Helt eksakt resultat (i tillegg)</span><b>+10</b></div>
+<div class="ko-runde"><span>Bonus i målrike kamper</span><b>+3</b></div>
+<div class="fnote">Maks 20 per kamp, 23 med bonus. Tippet du 2–0: ble det 3–0 gir det +5 (riktig vinner), 1–0 gir +10 (riktig målforskjell), 2–0 gir +20 (eksakt).</div></div>
+<div class="fgruppe"><div class="ftit">Sluttspill (hvilke lag, ikke resultat)</div>
+<div class="ko-runde"><span>Hvert riktig lag videre, per runde</span><b>+10</b></div>
+<div class="ko-runde"><span>Riktig verdensmester</span><b>+10</b></div>
+<div class="ko-runde"><span>Riktig bronsevinner</span><b>+10</b></div>
+<div class="fnote">Runder som teller: kvalifisert til 16-delsfinale (de 32 lagene), 8-delsfinale, kvartfinale, semifinale og finale. Resultatet i kampene teller ikke, bare hvilke lag du har videre.</div></div>
+</details>
 <div class="kort" id="sammenlagt">
-<div class="samtopp"><b>Sammenlagt — hele puljen</b><span class="samkilde" id="sam-kilde">Marius' ark</span></div>
+<div class="samtopp"><b>Sammenlagt · hele puljen</b><span class="samkilde" id="sam-kilde">Marius' ark</span></div>
 <table class="sammenlagt-tab"><tbody id="sam-body"><tr><td class="samfot">Laster …</td></tr></tbody></table>
 <div class="samfot">Regnes ut automatisk fra alles tipp + kampresultatene, med Marius' eksakte poengregler (verifisert 15/15 mot arket hans). Trykk en person for å se sluttspill-tipset deres. Oppdaterer seg selv når nye kamper blir ferdige, så den kan ligge litt foran Marius' eget ark, som han fører for hånd.</div>
 </div>
@@ -132,12 +151,10 @@ tr.brk td { background:color-mix(in srgb,currentColor 4%,transparent); padding:8
 <button id="btn-norge">Bare Norge</button>
 </nav>
 <div id="sluttspill-kamper"><div class="skel">Henter sluttspill …</div></div>
-<details class="gruppe-bolk"><summary><span>Gruppespill — 72 kamper (ferdig)</span><span class="meta"><span class="dagsum" id="gruppe-sum"></span><span class="pil"></span></span></summary>
+<details class="gruppe-bolk"><summary><span>Gruppespill · 72 kamper (ferdig)</span><span class="meta"><span class="dagsum" id="gruppe-sum"></span><span class="pil"></span></span></summary>
 <div id="gruppe-kamper"><div class="skel">Henter gruppespill …</div></div>
 </details>
-<footer>Poeng (Marius-puljen): Gruppespill 5 for riktig utfall, +5 riktig målforskjell, +10 eksakt, +3 bonus i målrike kamper.
-Sluttspill: 10 poeng per riktig lag videre i hver runde (også kvalifisering til 16-delsfinale), +10 for riktig verdensmester
-og +10 for riktig bronse. Alt verifisert 15/15 mot Marius' ark. Lag, resultater og tidspunkt: VG Live.</footer>
+<footer>Poengene er verifisert 15/15 mot Marius' eget ark. Lag, resultater og tidspunkt hentes fra VG Live. Se «Slik regnes poengene» øverst for detaljer.</footer>
 <script>
 const D = {"tips":{"729655":[1,0],"729645":[2,0],"729568":[1,0],"729559":[0,2],"729579":[1,0],"729586":[0,1],"729651":[0,1],"729609":[2,0],"729563":[1,0],"729600":[0,1],"729649":[1,0],"729562":[2,0],"729585":[1,0],"729570":[0,2],"729574":[1,0],"729606":[1,0],"729658":[0,1],"729589":[1,0],"729588":[1,0],"729659":[2,0],"729599":[1,0],"729592":[0,1],"729598":[0,1],"729650":[1,0],"729656":[2,0],"729565":[2,0],"729558":[1,0],"729566":[1,0],"729583":[0,1],"729561":[2,0],"729654":[1,0],"729653":[1,0],"729591":[2,0],"729603":[2,0],"729567":[0,2],"729578":[2,0],"729575":[1,0],"729577":[2,0],"729580":[1,1],"729587":[1,0],"729662":[2,0],"729595":[1,0],"729597":[1,1],"729604":[2,0],"729593":[2,0],"729608":[0,1],"729657":[1,0],"729571":[1,0],"729646":[1,0],"729564":[2,0],"729573":[0,2],"729557":[0,1],"729648":[0,1],"729602":[0,1],"729605":[0,1],"729582":[0,2],"729652":[1,1],"729572":[0,1],"729647":[1,1],"729590":[0,1],"729661":[1,0],"729576":[0,1],"729584":[1,1],"729569":[0,2],"729581":[0,1],"729601":[0,2],"729607":[2,0],"729596":[0,1],"729660":[1,1],"729594":[0,1],"729610":[0,2],"674655":[0,1],"675245":[1,0],"674654":[1,0],"674656":[1,0],"675227":[1,0],"675225":[0,1],"675240":[1,0],"675242":[1,0],"675229":[2,0],"675248":[1,0],"675244":[1,0],"675230":[1,0],"675228":[1,0],"675222":[1,0],"675243":[1,0],"674653":[1,0],"675232":[0,1],"675231":[0,1],"675247":[0,1],"675246":[0,1],"675226":[0,1],"675224":[0,1],"675233":[1,0],"675241":[0,1],"675223":[0,1],"675234":[1,0],"675237":[0,1],"675249":[1,0],"675236":[0,1],"675238":[1,0],"675239":[1,0],"675235":[1,0],"729560":[2,0]},"ourRounds":{"R16":["Argentina","Belgia","Brasil","Canada","Colombia","England","Frankrike","Mexico","Nederland","Norge","Portugal","Spania","Sveits","Tyrkia","Tyskland","USA"],"QF":["Argentina","Belgia","England","Frankrike","Nederland","Norge","Portugal","Spania"],"SF":["Argentina","England","Frankrike","Spania"],"Final":["England","Spania"]},"ourChampion":"Spania","ourBronze":"Frankrike","koEvents":{"R16":[675231,675232,675247,675246,675226,675224,675233,675241],"QF":[675223,675234,675237,675249],"SF":[675236,675238],"bronze":675239,"final":675235,"Final":[675235]},"groupEventMax":729000,"schemes":{"A":{"team":10,"bronze":10,"champion":10},"B":{"team":15,"bronze":25,"champion":25},"C":{"team":20,"bronze":50,"champion":50}},"events":{"729560":{"d":"2026-06-11T19","h":"Mexico","a":"Sør-Afrika","st":null},"729655":{"d":"2026-06-12T02","h":"Sør-Korea","a":"Tsjekkia","st":null},"729645":{"d":"2026-06-12T19","h":"Canada","a":"Bosnia-Hercegovina","st":null},"729568":{"d":"2026-06-13T01","h":"USA","a":"Paraguay","st":null},"729559":{"d":"2026-06-13T19","h":"Qatar","a":"Sveits","st":null},"729579":{"d":"2026-06-13T22","h":"Brasil","a":"Marokko","st":null},"729586":{"d":"2026-06-14T01","h":"Haiti","a":"Skottland","st":null},"729651":{"d":"2026-06-14T04","h":"Australia","a":"Tyrkia","st":null},"729609":{"d":"2026-06-14T17","h":"Tyskland","a":"Curaçao","st":null},"729563":{"d":"2026-06-14T20","h":"Nederland","a":"Japan","st":null},"729600":{"d":"2026-06-14T23","h":"Elfenbenskysten","a":"Ecuador","st":null},"729649":{"d":"2026-06-15T02","h":"Sverige","a":"Tunisia","st":null},"729562":{"d":"2026-06-15T16","h":"Spania","a":"Kapp Verde","st":null},"729585":{"d":"2026-06-15T19","h":"Belgia","a":"Egypt","st":null},"729570":{"d":"2026-06-15T22","h":"Saudi-Arabia","a":"Uruguay","st":null},"729574":{"d":"2026-06-16T01","h":"Iran","a":"New Zealand","st":null},"729606":{"d":"2026-06-16T19","h":"Frankrike","a":"Senegal","st":null},"729658":{"d":"2026-06-16T22","h":"Irak","a":"Norge","st":null},"729589":{"d":"2026-06-17T01","h":"Argentina","a":"Algerie","st":null},"729588":{"d":"2026-06-17T04","h":"Østerrike","a":"Jordan","st":null},"729659":{"d":"2026-06-17T17","h":"Portugal","a":"DR Kongo","st":null},"729599":{"d":"2026-06-17T20","h":"England","a":"Kroatia","st":null},"729592":{"d":"2026-06-17T23","h":"Ghana","a":"Panama","st":null},"729598":{"d":"2026-06-18T02","h":"Usbekistan","a":"Colombia","st":null},"729650":{"d":"2026-06-18T16","h":"Tsjekkia","a":"Sør-Afrika","st":null},"729656":{"d":"2026-06-18T19","h":"Sveits","a":"Bosnia-Hercegovina","st":null},"729565":{"d":"2026-06-18T22","h":"Canada","a":"Qatar","st":null},"729558":{"d":"2026-06-19T01","h":"Mexico","a":"Sør-Korea","st":null},"729566":{"d":"2026-06-19T19","h":"USA","a":"Australia","st":null},"729583":{"d":"2026-06-19T22","h":"Skottland","a":"Marokko","st":null},"729561":{"d":"2026-06-20T00","h":"Brasil","a":"Haiti","st":null},"729654":{"d":"2026-06-20T03","h":"Tyrkia","a":"Paraguay","st":null},"729653":{"d":"2026-06-20T17","h":"Nederland","a":"Sverige","st":null},"729591":{"d":"2026-06-20T20","h":"Tyskland","a":"Elfenbenskysten","st":null},"729603":{"d":"2026-06-21T00","h":"Ecuador","a":"Curaçao","st":null},"729567":{"d":"2026-06-21T04","h":"Tunisia","a":"Japan","st":null},"729578":{"d":"2026-06-21T16","h":"Spania","a":"Saudi-Arabia","st":null},"729575":{"d":"2026-06-21T19","h":"Belgia","a":"Iran","st":null},"729577":{"d":"2026-06-21T22","h":"Uruguay","a":"Kapp Verde","st":null},"729580":{"d":"2026-06-22T01","h":"New Zealand","a":"Egypt","st":null},"729587":{"d":"2026-06-22T17","h":"Argentina","a":"Østerrike","st":null},"729662":{"d":"2026-06-22T21","h":"Frankrike","a":"Irak","st":null},"729595":{"d":"2026-06-23T00","h":"Norge","a":"Senegal","st":null},"729597":{"d":"2026-06-23T03","h":"Jordan","a":"Algerie","st":null},"729604":{"d":"2026-06-23T17","h":"Portugal","a":"Usbekistan","st":null},"729593":{"d":"2026-06-23T20","h":"England","a":"Ghana","st":null},"729608":{"d":"2026-06-23T23","h":"Panama","a":"Kroatia","st":null},"729657":{"d":"2026-06-24T02","h":"Colombia","a":"DR Kongo","st":null},"729571":{"d":"2026-06-24T19","h":"Sveits","a":"Canada","st":null},"729646":{"d":"2026-06-24T19","h":"Bosnia-Hercegovina","a":"Qatar","st":null},"729564":{"d":"2026-06-24T22","h":"Marokko","a":"Haiti","st":null},"729573":{"d":"2026-06-24T22","h":"Skottland","a":"Brasil","st":null},"729557":{"d":"2026-06-25T01","h":"Sør-Afrika","a":"Sør-Korea","st":null},"729648":{"d":"2026-06-25T01","h":"Tsjekkia","a":"Mexico","st":null},"729602":{"d":"2026-06-25T20","h":"Curaçao","a":"Elfenbenskysten","st":null},"729605":{"d":"2026-06-25T20","h":"Ecuador","a":"Tyskland","st":null},"729582":{"d":"2026-06-25T23","h":"Tunisia","a":"Nederland","st":null},"729652":{"d":"2026-06-25T23","h":"Japan","a":"Sverige","st":null},"729572":{"d":"2026-06-26T02","h":"Paraguay","a":"Australia","st":null},"729647":{"d":"2026-06-26T02","h":"Tyrkia","a":"USA","st":null},"729590":{"d":"2026-06-26T19","h":"Norge","a":"Frankrike","st":null},"729661":{"d":"2026-06-26T19","h":"Senegal","a":"Irak","st":null},"729576":{"d":"2026-06-27T00","h":"Uruguay","a":"Spania","st":null},"729584":{"d":"2026-06-27T00","h":"Kapp Verde","a":"Saudi-Arabia","st":null},"729569":{"d":"2026-06-27T03","h":"New Zealand","a":"Belgia","st":null},"729581":{"d":"2026-06-27T03","h":"Egypt","a":"Iran","st":null},"729601":{"d":"2026-06-27T21","h":"Panama","a":"England","st":null},"729607":{"d":"2026-06-27T21","h":"Kroatia","a":"Ghana","st":null},"729596":{"d":"2026-06-27T23","h":"Colombia","a":"Portugal","st":null},"729660":{"d":"2026-06-27T23","h":"DR Kongo","a":"Usbekistan","st":null},"729594":{"d":"2026-06-28T02","h":"Algerie","a":"Østerrike","st":null},"729610":{"d":"2026-06-28T02","h":"Jordan","a":"Argentina","st":null},"674655":{"d":"2026-06-28T19","h":"Sør-Korea","a":"Canada","st":"16-delsfinale","adv":"Canada"},"674656":{"d":"2026-06-29T17","h":"Brasil","a":"Japan","st":"16-delsfinale","adv":"Brasil"},"675245":{"d":"2026-06-29T20","h":"Tyskland","a":"Australia","st":"16-delsfinale","adv":"Tyskland"},"674654":{"d":"2026-06-30T01","h":"Nederland","a":"Marokko","st":"16-delsfinale","adv":"Nederland"},"675225":{"d":"2026-06-30T17","h":"Ecuador","a":"Norge","st":"16-delsfinale","adv":"Norge"},"675227":{"d":"2026-06-30T21","h":"Frankrike","a":"Sverige","st":"16-delsfinale","adv":"Frankrike"},"675240":{"d":"2026-07-01T01","h":"Mexico","a":"Skottland","st":"16-delsfinale","adv":"Mexico"},"675242":{"d":"2026-07-01T16","h":"England","a":"Senegal","st":"16-delsfinale","adv":"England"},"675248":{"d":"2026-07-01T20","h":"Belgia","a":"Tsjekkia","st":"16-delsfinale","adv":"Belgia"},"675229":{"d":"2026-07-02T00","h":"USA","a":"Bosnia-Hercegovina","st":"16-delsfinale","adv":"USA"},"675230":{"d":"2026-07-02T19","h":"Spania","a":"Østerrike","st":"16-delsfinale","adv":"Spania"},"675244":{"d":"2026-07-02T23","h":"Colombia","a":"Kroatia","st":"16-delsfinale","adv":"Colombia"},"675228":{"d":"2026-07-03T03","h":"Sveits","a":"Elfenbenskysten","st":"16-delsfinale","adv":"Sveits"},"674653":{"d":"2026-07-03T18","h":"Tyrkia","a":"Iran","st":"16-delsfinale","adv":"Tyrkia"},"675222":{"d":"2026-07-03T22","h":"Argentina","a":"Uruguay","st":"16-delsfinale","adv":"Argentina"},"675243":{"d":"2026-07-04T01","h":"Portugal","a":"Panama","st":"16-delsfinale","adv":"Portugal"},"675231":{"d":"2026-07-04T17","h":"Canada","a":"Nederland","st":"Åttendedelsfinale","adv":"Nederland"},"675232":{"d":"2026-07-04T21","h":"Tyskland","a":"Frankrike","st":"Åttendedelsfinale","adv":"Frankrike"},"675247":{"d":"2026-07-05T20","h":"Brasil","a":"Norge","st":"Åttendedelsfinale","adv":"Norge"},"675246":{"d":"2026-07-06T00","h":"Mexico","a":"England","st":"Åttendedelsfinale","adv":"England"},"675226":{"d":"2026-07-06T19","h":"Colombia","a":"Spania","st":"Åttendedelsfinale","adv":"Spania"},"675224":{"d":"2026-07-07T00","h":"USA","a":"Belgia","st":"Åttendedelsfinale","adv":"Belgia"},"675233":{"d":"2026-07-07T16","h":"Argentina","a":"Tyrkia","st":"Åttendedelsfinale","adv":"Argentina"},"675241":{"d":"2026-07-07T20","h":"Sveits","a":"Portugal","st":"Åttendedelsfinale","adv":"Portugal"},"675223":{"d":"2026-07-09T20","h":"Nederland","a":"Frankrike","st":"Kvartfinale","adv":"Frankrike"},"675234":{"d":"2026-07-10T19","h":"Spania","a":"Belgia","st":"Kvartfinale","adv":"Spania"},"675237":{"d":"2026-07-11T21","h":"Norge","a":"England","st":"Kvartfinale","adv":"England"},"675249":{"d":"2026-07-12T01","h":"Argentina","a":"Portugal","st":"Kvartfinale","adv":"Argentina"},"675236":{"d":"2026-07-14T19","h":"Frankrike","a":"Spania","st":"Semifinale","adv":"Spania"},"675238":{"d":"2026-07-15T19","h":"England","a":"Argentina","st":"Semifinale","adv":"England"},"675239":{"d":"2026-07-18T21","h":"Frankrike","a":"Argentina","st":"Bronsefinale","adv":"Frankrike"},"675235":{"d":"2026-07-19T19","h":"Spania","a":"England","st":"FINALE","adv":"Spania"}}};
 const sgn = x => x > 0 ? 1 : x < 0 ? -1 : 0;
@@ -155,6 +172,17 @@ function poeng(p, a) {
     else if (ah+aa >= 8) { if (Math.abs(ph-ah)+Math.abs(pa-aa) <= 1) pts += 3; }
   }
   return pts;
+}
+function grunn(p, a){
+  const ph=p[0],pa=p[1],ah=a[0],aa=a[1];
+  let r;
+  if(sgn(ph-pa)!==sgn(ah-aa)) r='bom';
+  else if(ph===ah&&pa===aa) r='eksakt resultat';
+  else if(ph-pa===ah-aa) r='riktig målforskjell';
+  else r='riktig vinner';
+  const base = r==='eksakt resultat'?20:r==='riktig målforskjell'?10:r==='riktig vinner'?5:0;
+  if(poeng(p,a)>base) r += ' + bonus';
+  return r;
 }
 const pillKl = p => p >= 20 ? 'p20' : p >= 10 ? 'p10' : p >= 5 ? 'p5' : 'p0';
 const WD = ['Søndag','Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag'];
@@ -340,12 +368,11 @@ function koSeksjon(rader, FS){
   const head = `<div class="kort ko-head">
     <b>Sluttspill</b> <span class="ko-tot">+${s.teams + s.final} p</span>
     <div class="delsum">
-      <span>Kvalifisert <b>${s.r32}</b></span>
-      <span>Videre i cupen <b>${s.teams - s.r32}</b></span>
-      <span>Mester + bronse <b>${s.final}</b></span>
+      <span>Kvalifisert <b>+${s.r32}</b> <small>${s.r32/10}/32 lag</small></span>
+      <span>Videre <b>+${s.teams - s.r32}</b></span>
+      <span>Mester + bronse <b>+${s.final}</b></span>
     </div>
-    <div class="status">Ekte lag, resultater og tidspunkt fra VG. «Du har videre» = laget du har tippet videre fra kampen.
-      Trykk en kamp for å se hva alle 15 har tippet.</div>
+    <div class="status">10 poeng per riktig lag videre i hver runde (også de 32 som kvalifiserte seg), +10 for riktig mester og +10 for bronse. Selve resultatet i sluttspillkampene gir ingen poeng, bare hvilke lag som går videre. Ekte lag og tid fra VG. Trykk en kamp for å se alle 15.</div>
   </div>`;
   return head + dagSeksjoner(rader, true);
 }
@@ -382,7 +409,7 @@ function grKampHtml(m){
   let hoved, undertekst = '', pille;
   if(m.ferdig || m.live){
     hoved = `${m.h} ${m.hs}–${m.as_} ${m.a}`;
-    undertekst = `Tipset ditt: ${m.tip[0]}–${m.tip[1]}`;
+    undertekst = m.ferdig ? `Tipset ditt: ${m.tip[0]}–${m.tip[1]} · ${grunn(m.tip, [m.hs, m.as_])}` : `Tipset ditt: ${m.tip[0]}–${m.tip[1]}`;
     pille = `<span class="p ${pillKl(m.p)}${m.live ? ' live' : ''}">${m.live ? '~' : '+'}${m.p}</span>`;
   } else {
     hoved = `${m.h} <span style="color:var(--demp)">–</span> ${m.a}`;
