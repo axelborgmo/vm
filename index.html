@@ -111,6 +111,7 @@ tr.brk td { background:color-mix(in srgb,currentColor 4%,transparent); padding:8
 .brk-l { display:flex; gap:10px; padding:3px 0; font-size:13px; }
 .brk-k { color:var(--demp); min-width:62px; flex-shrink:0; }
 .prsub { display:block; font-size:11px; color:var(--demp); font-weight:400; margin-top:1px; }
+.pen { font-size:11.5px; font-weight:700; color:var(--gul); white-space:nowrap; }
 .pp.ptip { background:var(--flate); color:CanvasText; }
 .forklar > summary { list-style:none; display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-weight:700; }
 .forklar[open] > summary { margin-bottom:6px; }
@@ -351,6 +352,12 @@ function byggKamper(j, FS){
         rad.advKey = koAdv[eid];
         rad.winner = ferdig ? vinnerCanon(ev, parts) : null;
         rad.axelPick = koPickEng(MEG, eid, engH, engA);
+        const rh = r[hid] || {}, ra = r[aid] || {};
+        hs = rh.runningScore ?? rh.regularTimeScore ?? hs;
+        as_ = ra.runningScore ?? ra.regularTimeScore ?? as_;
+        const sub = ev && ev.status ? ev.status.subtype : '';
+        if(sub === 'finishedAfterPenaltyShootout') rad.pen = [rh.penaltyShootoutScore ?? 0, ra.penaltyShootoutScore ?? 0];
+        else if(sub === 'finishedAfterExtraTime' || rh.overtimeScore || ra.overtimeScore) rad.aet = true;
       }
     }
     rad.h = h; rad.a = a; rad.hs = hs; rad.as_ = as_;
@@ -425,8 +432,11 @@ function koKampHtml(m){
   const norge = (m.h === 'Norge' || m.a === 'Norge') ? ' norge' : '';
   const liveTag = m.live ? '<span class="st">Pågår</span>' : '';
   const stTag = `<span class="st">${m.meta.st}</span>`;
+  let ekstra = '';
+  if(m.pen) ekstra = ` <span class="pen">(str. ${m.pen[0]}–${m.pen[1]})</span>`;
+  else if(m.aet) ekstra = ' <span class="pen">(e.o.)</span>';
   const hoved = (m.ferdig || m.live)
-    ? `${m.h} ${m.hs}–${m.as_} ${m.a}`
+    ? `${m.h} ${m.hs}–${m.as_} ${m.a}${ekstra}`
     : `${m.h} <span style="color:var(--demp)">–</span> ${m.a}`;
   const pickN = m.axelPick ? disp(m.axelPick) : null;
   const mm = koMatchOf(m.eid, MEG);
@@ -440,7 +450,7 @@ function koKampHtml(m){
   let pille;
   if(m.ferdig) pille = (m.axelPick && m.axelPick === m.winner) ? '<span class="p p10">+10</span>' : '<span class="p p0">0</span>';
   else pille = pickN ? `<span class="p ptip">${kort(pickN)}</span>` : '<span class="p p0">–</span>';
-  return `<div class="k${norge} k-klikk" data-eid="${m.eid}" data-kind="ko" data-engh="${m.engH || ''}" data-enga="${m.engA || ''}" data-ferdig="${m.ferdig ? 1 : 0}" data-winner="${m.winner || ''}">
+  return `<div class="k${norge} k-klikk" data-eid="${m.eid}" data-kind="ko" data-engh="${m.engH || ''}" data-enga="${m.engA || ''}" data-ferdig="${m.ferdig ? 1 : 0}" data-winner="${m.winner || ''}" data-pen="${m.pen ? m.pen.join('-') : ''}">
     <time>${hhmm(m.t)}</time>
     <span class="lag"><span class="res">${hoved}</span>${stTag}${liveTag}<span class="folk-ind">alle 15 ›</span>
     <span class="tipstxt">${pickTxt}</span></span>${pille}</div>`;
@@ -483,10 +493,11 @@ function popoverKO(k){
     return `<div class="pr${meg}"><span class="prn">${D2.short[r.navn] || r.navn}<span class="prsub">${sub}</span></span><span class="pp ${cls}">${advN}</span></div>`;
   }).join('');
   const wN = winner ? disp(winner) : null;
+  const penTxt = k.dataset.pen ? ' på straffer' : '';
   let topp;
-  if(advKey === 'champion') topp = ferdig ? `Verdensmester: ${wN}` : 'Finale · alles finalekamp + mester';
-  else if(advKey === 'bronze') topp = ferdig ? `Bronse: ${wN} · alles bronsetips` : 'Bronsefinale · alles bronsetips';
-  else topp = ferdig ? `${wN} gikk videre · kampen de hadde + hvem videre` : 'Ikke spilt · kampen de hadde + hvem videre';
+  if(advKey === 'champion') topp = ferdig ? `Verdensmester: ${wN}${penTxt}` : 'Finale · alles finalekamp + mester';
+  else if(advKey === 'bronze') topp = ferdig ? `Bronse: ${wN}${penTxt} · alles bronsetips` : 'Bronsefinale · alles bronsetips';
+  else topp = ferdig ? `${wN} gikk videre${penTxt} · kampen de hadde + hvem videre` : 'Ikke spilt · kampen de hadde + hvem videre';
   return `<div class="k-pers"><div class="pr-topp">${topp}</div>${inner}</div>`;
 }
 
