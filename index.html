@@ -395,10 +395,8 @@ function dagSeksjoner(rader, isKO){
     const erIdag = k === idag;
     const t0 = ms[0].t;
     const anyFin = ms.some(m => m.ferdig);
-    const dp = isKO
-      ? ms.reduce((s,m) => s + (m.ferdig && m.axelPick && m.axelPick === m.winner ? 10 : 0), 0)
-      : ms.reduce((s,m) => s + (m.ferdig ? m.p : 0), 0);
-    const dsumTxt = anyFin ? `<span class="dagsum">+${dp} p</span>` : '';
+    let dsumTxt = '';
+    if(!isKO && anyFin) dsumTxt = `<span class="dagsum">+${ms.reduce((s,m) => s + (m.ferdig ? m.p : 0), 0)} p</span>`;
     html += `<details class="dag${harNorge ? ' har-norge' : ''}${erIdag ? ' idag-mark' : ''}" data-dato="${k}"${erIdag ? ' open' : ''}><summary>
       <span class="dato">${dagLabel(t0)}</span>
       <span class="meta">${ms[0].meta.st ? `<span class="fase">${ms[0].meta.st}</span>` : ''}
@@ -438,18 +436,15 @@ function koKampHtml(m){
   const hoved = (m.ferdig || m.live)
     ? `${m.h} ${m.hs}–${m.as_} ${m.a}${ekstra}`
     : `${m.h} <span style="color:var(--demp)">–</span> ${m.a}`;
-  const pickN = m.axelPick ? disp(m.axelPick) : null;
-  const mm = koMatchOf(m.eid, MEG);
-  let pickTxt;
-  if(mm){
-    const tip = D.tips[m.eid];
-    pickTxt = tip ? `Du tippet: ${disp(mm[0])} ${tip[0]}–${tip[1]} ${disp(mm[1])}`
-                  : `Du hadde: ${disp(mm[0])} – ${disp(mm[1])}`;
-  } else if(m.advKey === 'bronze') pickTxt = pickN ? `Din bronse: ${pickN}` : 'Din bronse: –';
-  else pickTxt = pickN ? `Du har videre: ${pickN}` : 'Du: ingen av disse videre';
+  const advNo = m.meta.adv || null;
+  const advEng = advNo ? canon(advNo) : null;
+  const tip = D.tips[m.eid];
+  const pickTxt = tip ? `Du tippet: ${m.meta.h} ${tip[0]}–${tip[1]} ${m.meta.a}`
+                      : (advNo ? `Du har videre: ${advNo}` : 'Du: ingen tippet her');
   let pille;
-  if(m.ferdig) pille = (m.axelPick && m.axelPick === m.winner) ? '<span class="p p10">+10</span>' : '<span class="p p0">0</span>';
-  else pille = pickN ? `<span class="p ptip">${kort(pickN)}</span>` : '<span class="p p0">–</span>';
+  if(!advNo) pille = '<span class="p p0">–</span>';
+  else if(m.ferdig) pille = (advEng === m.winner) ? `<span class="p p10">${kort(advNo)}</span>` : `<span class="p p0">${kort(advNo)}</span>`;
+  else pille = `<span class="p ptip">${kort(advNo)}</span>`;
   return `<div class="k${norge} k-klikk" data-eid="${m.eid}" data-kind="ko" data-engh="${m.engH || ''}" data-enga="${m.engA || ''}" data-ferdig="${m.ferdig ? 1 : 0}" data-winner="${m.winner || ''}" data-pen="${m.pen ? m.pen.join('-') : ''}">
     <time>${hhmm(m.t)}</time>
     <span class="lag"><span class="res">${hoved}</span>${stTag}${liveTag}<span class="folk-ind">alle 15 ›</span>
@@ -484,9 +479,11 @@ function popoverKO(k){
   const inner = rows.map(r => {
     const meg = r.navn === MEG ? ' meg' : '';
     let sub;
-    if(r.mm){
-      const tip = r.navn === MEG ? D.tips[eid] : null;
-      sub = tip ? `${disp(r.mm[0])} ${tip[0]}–${tip[1]} ${disp(r.mm[1])}` : `${disp(r.mm[0])} – ${disp(r.mm[1])}`;
+    if(r.navn === MEG && D.tips[eid] && D.events[eid]){
+      const me = D.events[eid], tp = D.tips[eid];
+      sub = `${me.h} ${tp[0]}–${tp[1]} ${me.a}`;
+    } else if(r.mm){
+      sub = `${disp(r.mm[0])} – ${disp(r.mm[1])}`;
     } else sub = advKey === 'bronze' ? 'bronsetips' : '';
     const cls = !ferdig ? 'ptip' : (r.ok ? 'p10' : 'p0');
     const advN = r.adv ? disp(r.adv) : '–';
